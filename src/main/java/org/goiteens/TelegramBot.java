@@ -34,11 +34,11 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "Java02";
+        return "denysjava02_bot";
     }
 
     @Override
     public String getBotToken() {
-        return "1710391337:AAG9GXArW4evpaERL-o4vILVMOvYfTRLS4M";
+        return "1786184098:AAFlKIERGm8vfnNK25L_glvAmcut5HZTSDs";
     }
 }
