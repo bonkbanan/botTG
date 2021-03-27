@@ -87,9 +87,14 @@ public class ChatBot {
     private static boolean isHelloMessage(String message) {
         message = message.toLowerCase();
 
-        String helloWord1 = "привет";
-        String helloWord2 = "здравствуй";
+        List<String> list = new ArrayList<>();
+        list.add("привет");
+        list.add("здравствуй");
+        list.add("бонжур");
+        list.add("салам молейкум");
+        list.add("боназива");
+        list.add("hi");
 
-        return message.contains(helloWord1) || message.contains(helloWord2);
+        return list.contains(message);
     }
 }
