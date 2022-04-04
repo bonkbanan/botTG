@@ -34,8 +34,21 @@ public class ChatBot {
     }
 
     public static String process(String message) {
-        if ("слава україні".equals(message.toLowerCase())){
+        if ("слава україні".equals(message.toLowerCase())) {
             return "Героям Слава";
+        }
+        if("/start".equals(message.toLowerCase())){
+            return "Привіт, я Banan's Bot.\n"+
+                    "Я вмію:\n" +
+                    "Відповідати на стандартні привітання привіт,hello,hi і інші Українські привітання.\n" +
+                    "Вмію грати у камінь-ножниці-бумага. Для початку напишіть 'Давай Зіграєм'.\n"+
+                    "Можу дати свійжий курс валют. Для цього напишіть 'Курс Валют'.\n";
+        }
+        if("help".equals(message.toLowerCase()) || "команди".equals(message.toLowerCase()) || "допоможи".equals(message.toLowerCase())){
+            return "Я вмію:\n" +
+            "Відповідати на стандартні привітання привіт,hello,hi і інші Українські привітання.\n" +
+            "Вмію грати у камінь-ножниці-бумага. Для початку напишіть 'Давай Зіграєм'.\n"+
+            "Можу дати свійжий курс валют. Для цього напишіть 'Курс Валют'.\n";
         }
         if ("слава нації".equals(message.toLowerCase())){
             return "Смерть Ворогам";
@@ -48,24 +61,11 @@ public class ChatBot {
         }
 
         if (isHelloMessage(message)) {
-            String botName = "ChatBot";
+            String botName = "Banan's Bot";
             return "Приветствую, я - " + botName;
         }
 
-        int professionSalary = find(message, professions);
-        int dreamCost = find(message, dreams);
-
-        if (professionSalary < 0) {
-            return "Я не найшов в твоєму повідомленні назву професії";
-        }
-
-        if (dreamCost < 0) {
-            return "Я не найшов в твоєму повідомленні мрію, яку ти хочеш";
-        }
-
-        int monthCount = calculateMonthCount(dreamCost, professionSalary);
-
-        return "Щоб получити свою мрію, необхідно місяців: " + monthCount;
+        return "Вибачте, але я не найшов у вашому повідомлення команду, яку я можу виконати(";
     }
 
     public static int find(String message, Map<String, Integer> data) {
@@ -104,6 +104,7 @@ public class ChatBot {
         List<String> list = new ArrayList<>();
         list.add("привіт");
         list.add("здравствуй");
+        list.add("здравсте");
         list.add("бонжур");
         list.add("салам молейкум");
         list.add("боназива");
@@ -113,24 +114,5 @@ public class ChatBot {
 
         return list.contains(message);
     }
-
-    public static boolean isGameMessage(String message){
-        List<String> scissors = new ArrayList<>(
-                Arrays.asList("✂️","✌️","🖖","✌️","✌","✂")
-        );
-        List<String> paper = new ArrayList<>(
-                Arrays.asList("🤚","🖐")
-        );
-        List<String> stone = new ArrayList<>(
-                Arrays.asList("\uD83D\uDC4A","\uD83E\uDD1C","✊","🤛")
-        );
-
-        List<String> list = new ArrayList<>();
-        list.addAll(scissors);
-        list.addAll(stone);
-        list.addAll(paper);
-        return list.contains(message);
-    }
-
 
 }
