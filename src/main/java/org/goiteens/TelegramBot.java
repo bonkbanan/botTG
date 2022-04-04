@@ -35,7 +35,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }else{
-                    if(update.getMessage().getText().toLowerCase().equals("курс валют")){
+                    if(update.getMessage().getText().toLowerCase().equals("курс валют") ||update.getMessage().getText().toLowerCase().equals("курс") ){
                         try {
                             execute(sendInlineKeyBoardForeignMoney(update.getMessage().getChatId().toString()));
                         } catch (TelegramApiException e) {
