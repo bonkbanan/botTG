@@ -22,7 +22,7 @@ public class TelegramBot extends TelegramLongPollingBot{
     }
     List<String> games = new ArrayList<>(Arrays.asList("scissors","paper","stone"));
     List<String> exchange = new ArrayList<>(Arrays.asList("dollar","euro","złoty","rubly","pound","yen"));
-    List<String> trash = new ArrayList<>(Arrays.asList("хвилинка релаксу","/start","зіграти камінь-ножниці-папір","актуальний курс валют","нехай проблеми та незгоди не роблять вам в житті погоди(погода)","help","патріотична хвилинка"));
+    List<String> trash = new ArrayList<>(Arrays.asList("хвилинка релаксу","/start","зіграти камінь-ножниці-папір","актуальний курс валют","нехай проблеми та незгоди не роблять вам в житті погоди(погода)","патріотична хвилинка"));
     List<String> storage = new ArrayList<>();
 
 
@@ -80,34 +80,15 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
-//                if (message.charAt(0) == 'у' && message.charAt(1) ==' '){
-//                    try {
-//                        execute(new SendMessage().setText(Weather.weather(message)).setChatId(update.getMessage().getChatId().toString()));
-//                    } catch (TelegramApiException | IOException | ParseException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                if(message.equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) {
-//                    try {
-//                        execute(new SendMessage().setText("Введіть будь ласка 'У {Ваше місто у назвиному відмінку} {місяць-день(за бажанням)}'").setChatId(update.getMessage().getChatId().toString()));
-//                    } catch (TelegramApiException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-                if(message.equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)") || storage.get(storage.size()-2).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) {
-                    if(storage.size()>1) {
-                        if(storage.get(storage.size()-2).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) {
-                            try {
-                                execute(new SendMessage().setText(Weather.weather(message)).setChatId(update.getMessage().getChatId().toString()));
-                            } catch (TelegramApiException | IOException | ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }else {
-                            forWeatherElse(update);
-                        }
-                    }else{
-                        forWeatherElse(update);
+                if(storage.size()>1 && storage.get(storage.size()-2).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")){
+                    try {
+                        execute(new SendMessage().setText(Weather.weather(message)).setChatId(update.getMessage().getChatId().toString()));
+                    } catch (TelegramApiException | IOException | ParseException e) {
+                        e.printStackTrace();
                     }
+                }
+                if(message.equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) {
+                        forWeatherElse(update);
                 }
                 if(message.equals("хвилинка релаксу з кімом")) {
                     try {
@@ -123,15 +104,15 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
-                if(!trash.contains(message) && !storage.get(storage.size()-2).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")){
-                    String response = null;
-                    try {
-                        response = ChatBot.process(message);
-                        sendText((update.getMessage().getChatId().toString()), response);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                if(!trash.contains(message) ){
+                    if(storage.size()==0) {
+                        forCharBot(update,message);
+                    }else if (storage.size() == 1 && !storage.get(0).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) {
+                        forCharBot(update,message);
+                    }else if (storage.size() > 1 && !storage.get(storage.size() - 2).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) {
+                                forCharBot(update,message);
+                            }
+                        }
             }
         }else if(update.hasCallbackQuery()) {
             if (games.contains(update.getCallbackQuery().getData())) {
@@ -149,6 +130,16 @@ public class TelegramBot extends TelegramLongPollingBot{
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    public void forCharBot(Update update,String message){
+        String response = null;
+        try {
+            response = ChatBot.process(message);
+            sendText((update.getMessage().getChatId().toString()), response);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
