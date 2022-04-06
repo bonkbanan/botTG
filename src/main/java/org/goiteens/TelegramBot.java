@@ -154,7 +154,7 @@ public class TelegramBot extends TelegramLongPollingBot{
 
     public void forWeatherElse(Update update){
         try {
-            execute(new SendMessage().setText("Введіть будь ласка '{Ваше місто у назвиному відмінку} {місяць-день(за бажанням)}'").setChatId(update.getMessage().getChatId().toString()));
+            execute(new SendMessage().setText("Введіть будь ласка '{Ваше місто} {(за бажанням) Місяць-день через '-'}'").setChatId(update.getMessage().getChatId().toString()));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
