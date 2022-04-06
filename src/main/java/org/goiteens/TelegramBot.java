@@ -83,6 +83,7 @@ public class TelegramBot extends TelegramLongPollingBot{
         }
     }
 
+
     public static String weather(String message) throws IOException, ParseException {
         Date date1 = new Date();
         List<String> array = new ArrayList<>(Arrays.asList(message.split(" ")));
