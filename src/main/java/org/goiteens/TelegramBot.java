@@ -12,41 +12,55 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 public class TelegramBot extends TelegramLongPollingBot{
     public TelegramBot() {
-        ChatBot.initDreams();
-        ChatBot.initProfessions();
+
     }
     List<String> games = new ArrayList<>(Arrays.asList("scissors","paper","stone"));
     List<String> exchange = new ArrayList<>(Arrays.asList("dollar","euro","złoty","rubly","pound","yen"));
+    List<String> trash = new ArrayList<>(Arrays.asList("давай зіграєм","курс валют","курс"));
+
 
     @Override
     public void onUpdateReceived(Update update) {
         if(update.hasMessage()){
             if(update.getMessage().hasText()){
-                if(update.getMessage().getText().toLowerCase().equals("давай зіграєм")){
+                String message = update.getMessage().getText().toLowerCase();
+                if(message.equals("давай зіграєм")){
                     try {
                         execute(sendInlineKeyBoardMessage(update.getMessage().getChatId().toString()));
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
-                }else{
-                    if(update.getMessage().getText().toLowerCase().equals("курс валют") ||update.getMessage().getText().toLowerCase().equals("курс") ){
-                        try {
-                            execute(sendInlineKeyBoardForeignMoney(update.getMessage().getChatId().toString()));
-                        } catch (TelegramApiException e) {
-                            e.printStackTrace();
-                        }
+                }
+                if(message.equals("курс валют") || message.equals("курс") ){
+                    try {
+                        execute(sendInlineKeyBoardForeignMoney(update.getMessage().getChatId().toString()));
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
                     }
-                    else {
-                        String message = update.getMessage().getText();
-                        String response = ChatBot.process(message);
-
+                }
+                if(message.contains("погода")) {
+                    try {
+                        execute(new SendMessage().setText(weather(message)).setChatId(update.getMessage().getChatId().toString()));
+                    } catch (TelegramApiException | IOException | ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(!trash.contains(message) && !message.contains("погода")){
+                    String response = null;
+                    try {
+                        response = ChatBot.process(message);
                         sendText((update.getMessage().getChatId().toString()), response);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -67,6 +81,84 @@ public class TelegramBot extends TelegramLongPollingBot{
                 }
             }
         }
+    }
+
+    public static String weather(String message) throws IOException, ParseException {
+        Date date1 = new Date();
+        List<String> array = new ArrayList<>(Arrays.asList(message.split(" ")));
+        String city = array.get(1);
+        String date;
+        SimpleDateFormat formatForYearNow = new SimpleDateFormat("yyyy");
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+        String kek = "";
+        if (array.size() == 2) {
+            date = formatForDateNow.format(date1);
+        } else {
+            date = array.get(2);
+        }
+        String[] dayMonth = date.split("-");
+        if (dayMonth[0].equals("1") && date1.getMonth() == 12) {
+            kek += Integer.parseInt(formatForYearNow.format(date1)) + 1;
+            kek += "-";
+            kek += date;
+        } else {
+            kek += formatForYearNow.format(date1);
+            kek += "-";
+            kek += date;
+        }
+        Date dateOne = format.parse(kek);
+        long difference = dateOne.getTime() - date1.getTime();
+        int days = (int) (difference / (24 * 60 * 60 * 1000));
+
+        if (days >= 0) {
+            String url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/";
+            url += city;
+            url += "?unitGroup=metric&key=F9JEPVVBPAU6MQBEFEA7DXNXD&contentType=json";
+            String doc = Jsoup.connect(url).ignoreContentType(true).execute().body();
+            ;
+            doc = doc.toLowerCase();
+            doc = doc.replaceAll("[,:]", " ");
+            doc = doc.replaceAll("[^a-z- 0-9.]", "");
+            List<String> list = new ArrayList<>(Arrays.asList(doc.split(" ")));
+            list = list.stream().filter(el -> el.length() > 1).collect(Collectors.toList());
+            int index;
+
+
+            OptionalInt indexHour;
+            List<String> finalList = list;
+            indexHour = IntStream.range(0, list.size()).filter(el -> isGoodTime(finalList, el)).findFirst();
+
+            index = list.indexOf(kek);
+            String status = "";
+            int i = index + 66;
+            while (!list.get(i).equals("description")) {
+                status += list.get(i);
+                status += " ";
+                i++;
+            }
+            return "У цьому місті в цей момент часу така погода: \n" +
+                    "Стан погоди: " + status +
+                    "\nМаксимальна температура: " + list.get(index + 4) +
+                    "\nМінімальна температура: " + list.get(index + 6) +
+                    "\nТемпература в данний момент: " + list.get(indexHour.getAsInt() + 6) +
+                    "\nВідчувається як: " + list.get(indexHour.getAsInt() + 8) +
+                    "\nВологість повітря: " + list.get(indexHour.getAsInt() + 10) +
+                    "%\nАтмосферний тиск: " + list.get(indexHour.getAsInt() + 30) +
+                    " мм ртутного стовпчика\nНебо в хмарах: " + list.get(index + 40) +
+                    "%\nСхід Сонця: " + list.get(index + 52) + ":" + list.get(index + 53) + ":" + list.get(index + 54) +
+                    "\nЗахід Сонця: " + list.get(index + 58) + ":" + list.get(index + 59) + ":" + list.get(index + 60);
+        }
+        else{
+            return "Вибачте, але я не можу показати погоду, яка була раніше";
+        }
+    }
+
+    public static boolean isGoodTime(List<String> list,int index){
+        Date date1 = new Date();
+        SimpleDateFormat formatForHour = new SimpleDateFormat("HH");
+        return list.get(index).equals(formatForHour.format(date1)) && list.get(index + 1).equals("00");
     }
 
     public static SendMessage sendInlineKeyBoardForeignMoney(String chatId) {
@@ -162,7 +254,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                     result += list.get(index + 6);
                     result += "/";
                     result += list.get(index + 23);
-                    result += "\nНа Чорному Ринку: ";
+                    result += "\nВалютний курс: ";
                     result += list.get(index + 45);
                     result += "/";
                     result += list.get(index + 49);
@@ -174,7 +266,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                     result += list.get(index + 6);
                     result += "/";
                     result += list.get(index + 23);
-                    result += "\nНа Чорному Ринку: ";
+                    result += "\nВалютний курс: ";
                     result += list.get(index + 45);
                     result += "/";
                     result += list.get(index + 49);
@@ -186,7 +278,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                     result += list.get(index + 6);
                     result += "/";
                     result += list.get(index + 23);
-                    result += "\nНа Чорному Ринку: ";
+                    result += "\nВалютний курс: ";
                     result += list.get(index + 45);
                     result += "/";
                     result += list.get(index + 49);
@@ -198,7 +290,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                     result += list.get(index + 6);
                     result += "/";
                     result += list.get(index + 23);
-                    result += "\nНа Чорному Ринку: ";
+                    result += "\nВалютний курс: ";
                     result += list.get(index + 45);
                     result += "/";
                     result += list.get(index + 49);
@@ -210,7 +302,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                     result += list.get(index + 6);
                     result += "/";
                     result += list.get(index + 23);
-                    result += "\nНа Чорному Ринку: ";
+                    result += "\nВалютний курс: ";
                     result += list.get(index + 45);
                     result += "/";
                     result += list.get(index + 49);
@@ -222,7 +314,6 @@ public class TelegramBot extends TelegramLongPollingBot{
 
     public static String game(String message){
         String playerChoice = message;
-
 
         int dealer = (int) (Math.random() * 3);
         String dealerChoice = "";
