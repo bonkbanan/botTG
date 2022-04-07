@@ -30,8 +30,8 @@ public class Weather {
             date = array.get(1);
         }
 
-        if (city.equals("місто")) {
-            return "Введіть будь ласка 'погода місто'.\nЯкщо ви хочете станом на сьогодні - нічого не добавляйте. Якщо на якусь певну дату, напишіть 'погода Місто місяць-день'";
+        if (city.equals("місто") || city.equals("київ")) {
+            return "Введіть будь ласка 'погода місто'(Вибачте, Київ не працює).\nЯкщо ви хочете станом на сьогодні - нічого не добавляйте. Якщо на якусь певну дату, напишіть 'погода Місто місяць-день'";
         } else {
             String[] dayMonth = date.split("-");
             if (dayMonth[0].equals("1") && date1.getMonth() == 12) {
@@ -49,7 +49,7 @@ public class Weather {
 
             if (days >= 0) {
                 String url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/";
-                url += "Chernivtsi";
+                url += city;
                 url += "?unitGroup=metric&key=F9JEPVVBPAU6MQBEFEA7DXNXD&contentType=json";
                 String doc = Jsoup.connect(url).ignoreContentType(true).execute().body();
                 doc = doc.toLowerCase();
@@ -71,7 +71,7 @@ public class Weather {
                         continue;
                     } else {
                         status += list.get(i);
-                        if (list.get(i).equals("snow") || list.get(i).equals("rain") || list.get(i).equals("cloudy")) {
+                        if (list.get(i).equals("snow") || list.get(i).equals("rain") || list.get(i).equals("cloudy") || list.get(i).equals("overcast")) {
                             status += ", ";
                         } else {
                             status += " ";
