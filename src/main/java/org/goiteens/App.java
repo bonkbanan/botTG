@@ -18,7 +18,6 @@ public class App {
         }
     }
 
-
     public String getBotUsername() {
         return "denysjava02_bot";
     }
