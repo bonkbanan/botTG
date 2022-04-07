@@ -44,7 +44,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                                     "Можу дати свійжий курс валют. Для цього нажміть на 'Актуальний курс валют'.\n" +
                                     "Можу сказати свіжий прогноз погоди. Для цього нажмінть на 'Нехай проблеми та незгоди не роблять Вам в житті погоди(погода)'.\n"+
                                     "Якщо у вас був важкий день, нажміть на 'Хвилинка релаксу з Кімом'\n"+
-                                    "Якщо хочете відчути у собі патріота, нажміть 'патріотична хвилинка'");
+                                    "Якщо хочете відчути у собі патріота, нажміть 'Патріотична хвилинка'");
                     ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
                     keyboardMarkup.setResizeKeyboard(true);
                     List<KeyboardRow> keyboard = new ArrayList<>();
