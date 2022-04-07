@@ -5,7 +5,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class Currency {
     public static String exchangeRating(String message) throws IOException {
-        if(message.equals("rubly")){
+        if(message.equals("₽(rub)")){
             return "Російський корабель, іди на***";
         }else {
             Document doc = Jsoup.connect("https://minfin.com.ua/ua/currency/banks/").get();
@@ -29,7 +31,7 @@ public class Currency {
             String result = "";
             int index;
             switch (message) {
-                case "dollar":
+                case "$(usa)":
                     index = list.indexOf("hrefuacurrencybanksusd");
 
                     result += "USD: \nОфіційний: ";
@@ -41,7 +43,7 @@ public class Currency {
                     result += "/";
                     result += list.get(index + 49);
                     break;
-                case "euro":
+                case "€(euro)":
                     index = list.indexOf("hrefuacurrencybankseur");
 
                     result += "EURO: \nОфіційний: ";
@@ -53,7 +55,7 @@ public class Currency {
                     result += "/";
                     result += list.get(index + 49);
                     break;
-                case "złoty":
+                case "zł(pln)":
                     index = list.indexOf("hrefuacurrencybankspln");
 
                     result += "Złoty: \nОфіційний: ";
@@ -65,7 +67,7 @@ public class Currency {
                     result += "/";
                     result += list.get(index + 49);
                     break;
-                case "pound":
+                case "£(gbp)":
                     index = list.indexOf("hrefuacurrencybanksgbp");
 
                     result += "Pound: \nОфіційний: ";
@@ -77,10 +79,22 @@ public class Currency {
                     result += "/";
                     result += list.get(index + 49);
                     break;
-                case "yen":
+                case "¥(jpy)":
                     index = list.indexOf("hrefuacurrencybanksjpy");
 
                     result += "Yen: \nОфіційний: ";
+                    result += list.get(index + 6);
+                    result += "/";
+                    result += list.get(index + 23);
+                    result += "\nВалютний курс: ";
+                    result += list.get(index + 45);
+                    result += "/";
+                    result += list.get(index + 49);
+                    break;
+                case "fr(chf)":
+                    index = list.indexOf("hrefuacurrencybankschf");
+
+                    result += "Swiss Frank: \nОфіційний: ";
                     result += list.get(index + 6);
                     result += "/";
                     result += list.get(index + 23);
@@ -95,39 +109,29 @@ public class Currency {
     }
 
     public static SendMessage sendInlineKeyBoardForeignMoney(String chatId) {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton4 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton5 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton6 = new InlineKeyboardButton();
-        inlineKeyboardButton1.setText("$(USA)");
-        inlineKeyboardButton1.setCallbackData("dollar");
-        inlineKeyboardButton2.setText("€(EURO)");
-        inlineKeyboardButton2.setCallbackData("euro");
-        inlineKeyboardButton3.setText("zł (PLN)");
-        inlineKeyboardButton3.setCallbackData("złoty");
-        inlineKeyboardButton6.setText("₽ (RUB)");
-        inlineKeyboardButton6.setCallbackData("rubly");
-        inlineKeyboardButton5.setText("£ (GBP)");
-        inlineKeyboardButton5.setCallbackData("pound");
-        inlineKeyboardButton4.setText("¥ (JPY)");
-        inlineKeyboardButton4.setCallbackData("yen");
-        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-        keyboardButtonsRow1.add(inlineKeyboardButton1);
-        keyboardButtonsRow1.add(inlineKeyboardButton2);
-        keyboardButtonsRow1.add(inlineKeyboardButton3);
-        keyboardButtonsRow2.add(inlineKeyboardButton4);
-        keyboardButtonsRow2.add(inlineKeyboardButton5);
-        keyboardButtonsRow2.add(inlineKeyboardButton6);
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardButtonsRow1);
-        rowList.add(keyboardButtonsRow2);
+        SendMessage text = new SendMessage() // Create a message object object
+                .setChatId(chatId)
+                .setText("Виберіть валюту");
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setResizeKeyboard(true);
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row1 = new KeyboardRow();
+        KeyboardRow row2 = new KeyboardRow();
+        row1.add("$(USA)");
+        row1.add("€(EURO)");
+        row1.add("zł(PLN)");
+        row1.add("£(GBP)");
+        row2.add("¥(JPY)");
+        row2.add("Fr(CHF)");
+        row2.add("₽(RUB)");
+        row2.add("Назад");
 
-        inlineKeyboardMarkup.setKeyboard(rowList);
-        return new SendMessage().setChatId(chatId).setText("Вибирайте Валюту").setReplyMarkup(inlineKeyboardMarkup);
+        keyboard.add(row1);
+        keyboard.add(row2);
+
+        keyboardMarkup.setKeyboard(keyboard);
+        text.setReplyMarkup(keyboardMarkup);
+        return text;
     }
 
 }

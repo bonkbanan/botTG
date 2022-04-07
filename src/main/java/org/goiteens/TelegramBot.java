@@ -20,30 +20,31 @@ public class TelegramBot extends TelegramLongPollingBot{
     public TelegramBot() {
 
     }
-    List<String> games = new ArrayList<>(Arrays.asList("scissors","paper","stone"));
-    List<String> exchange = new ArrayList<>(Arrays.asList("dollar","euro","złoty","rubly","pound","yen"));
+    List<String> games = new ArrayList<>(Arrays.asList("✌️","✊","🤚"));
+    List<String> exchange = new ArrayList<>(Arrays.asList("fr(chf)","¥(jpy)","£(gbp)","zł(pln)","€(euro)","$(usa)","₽(rub)"));
     List<String> trash = new ArrayList<>(Arrays.asList("слава україні","help","команди","допоможи","домога","слава нації","путін","україна","🇺🇦","💙💛","привіт","здравствуй","здравсте","бонжур","салам молейкум","боназива","hi","hello","bounjour","слава ісусу хресту"));
-    List<String> trashForWeather = new ArrayList<>(Arrays.asList("хвилинка релаксу","/start","зіграти камінь-ножниці-папір","актуальний курс валют","патріотична хвилинка","нехай проблеми та незгоди не роблять вам в житті погоди(погода)"));
-    List<String> storage = new ArrayList<>();
+    List<String> trashForWeather = new ArrayList<>(Arrays.asList("назад","хвилинка релаксу з кімом","/start","зіграти камінь-ножниці-папір","актуальний курс валют","патріотична хвилинка","нехай проблеми та незгоди не роблять вам в житті погоди(погода)"));
+    List<HashMap<String,String>> storage = new ArrayList<>();
+
+
     int counter = 0;
 
 
     @Override
     public void onUpdateReceived(Update update) {
-        if(update.hasMessage()){
-            if(update.getMessage().hasText()){
+        if(update.hasMessage()) {
+            if (update.getMessage().hasText()) {
                 String message = update.getMessage().getText().toLowerCase();
-                storage.add(message);
                 if (message.equals("/start")) {
                     SendMessage text = new SendMessage() // Create a message object object
                             .setChatId(update.getMessage().getChatId())
-                            .setText("Привіт, я Banan's Bot.\n"+
+                            .setText("Привіт, я Banan's Bot.\n" +
                                     "Я вмію:\n" +
                                     "Відповідати на стандартні привітання привіт,hello,hi і інші Українські привітання.\n" +
-                                    "Вмію грати у камінь-ножниці-папір. Для цього нажміть на 'Зіграти камінь-ножниці-папір'.\n"+
+                                    "Вмію грати у камінь-ножниці-папір. Для цього нажміть на 'Зіграти камінь-ножниці-папір'.\n" +
                                     "Можу дати свійжий курс валют. Для цього нажміть на 'Актуальний курс валют'.\n" +
-                                    "Можу сказати свіжий прогноз погоди. Для цього нажмінть на 'Нехай проблеми та незгоди не роблять Вам в житті погоди(погода)'.\n"+
-                                    "Якщо у вас був важкий день, нажміть на 'Хвилинка релаксу з Кімом'\n"+
+                                    "Можу сказати свіжий прогноз погоди. Для цього нажмінть на 'Нехай проблеми та незгоди не роблять Вам в житті погоди(погода)'.\n" +
+                                    "Якщо у вас був важкий день, нажміть на 'Хвилинка релаксу з Кімом'\n" +
                                     "Якщо хочете відчути у собі патріота, нажміть 'Патріотична хвилинка'");
                     ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
                     keyboardMarkup.setResizeKeyboard(true);
@@ -69,94 +70,148 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
-                if(message.equals("зіграти камінь-ножниці-папір")){
+                if (message.equals("зіграти камінь-ножниці-папір")) {
                     try {
                         execute(Game.sendInlineKeyBoardMessage(update.getMessage().getChatId().toString()));
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
-                    counter=0;
                 }
-                if(message.equals("актуальний курс валют")){
+                if (message.equals("назад")) {
+                    SendMessage text = new SendMessage() // Create a message object object
+                            .setChatId(update.getMessage().getChatId())
+                            .setText("Назад так назад");
+                    ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+                    keyboardMarkup.setResizeKeyboard(true);
+                    List<KeyboardRow> keyboard = new ArrayList<>();
+                    KeyboardRow row = new KeyboardRow();
+                    KeyboardRow row1 = new KeyboardRow();
+                    KeyboardRow row2 = new KeyboardRow();
+                    row.add("Зіграти камінь-ножниці-папір");
+                    row.add("Актуальний курс валют");
+                    row1.add("Нехай проблеми та незгоди не роблять Вам в житті погоди(погода)");
+                    row1.add("Help");
+                    row2.add("Хвилинка релаксу з Кімом");
+                    row2.add("Патріотична хвилинка");
+                    keyboard.add(row);
+                    keyboard.add(row1);
+                    keyboard.add(row2);
+
+                    keyboardMarkup.setKeyboard(keyboard);
+                    text.setReplyMarkup(keyboardMarkup);
+                    try {
+                        execute(text);
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (games.contains(message)) {
+                    try {
+                        execute(new SendMessage().setText(Game.game(message)).setChatId(update.getMessage().getChatId()));
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (message.equals("актуальний курс валют")) {
                     try {
                         execute(Currency.sendInlineKeyBoardForeignMoney(update.getMessage().getChatId().toString()));
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
-                    counter = 0;
                 }
-                if(trash.contains(message) && storage.get(storage.size()-counter-1).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")){
-                    counter =0;
-                }
-                if(!trash.contains(message) && !trashForWeather.contains(message) && !storage.get(storage.size()-counter-1).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")){
+                if (!exchange.contains(message) && !games.contains(message) && !trash.contains(message) && !trashForWeather.contains(message) && !isForWeatherCity(storage,update)) {
                     try {
                         execute(new SendMessage().setText("Вибачте, але я не найшов у вашому повідомленні команду, яку я можу виконати(").setChatId(update.getMessage().getChatId().toString()));
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
-                    counter =0;
                 }
-                if((storage.size()>1 && storage.get(storage.size()-2).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) || storage.get(storage.size()-counter-1).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")){
-                    if(!trash.contains(message)) {
-                        if (counter != 0) {
+                if(isForWeatherCity(storage,update)) {
                             try {
                                 execute(new SendMessage().setText(Weather.weather(message)).setChatId(update.getMessage().getChatId().toString()));
                             } catch (TelegramApiException | IOException | ParseException e) {
                                 e.printStackTrace();
                             }
-                            counter++;
-                        }
-                    }else{
-                        counter = 0;
-                    }
                 }
-                if(message.equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) {
-                        forWeatherElse(update);
-                        counter++;
+                if (message.equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) {
+                    forWeatherElse(update);
                 }
-                if(message.equals("хвилинка релаксу з кімом")) {
+                if (message.equals("хвилинка релаксу з кімом")) {
+                    File Videofile = new File("/Users/bonkbanan/Desktop/botTG/src/main/java/org/videos/HD Epic Sax Gandalf.mp4");
+                    SendVideo sendVideo = new SendVideo();
+                    sendVideo.setChatId(update.getMessage().getChatId().toString());
+                    sendVideo.setVideo(Videofile);
+                    sendVideo.setWidth(1280);
+                    sendVideo.setHeight(720);
                     try {
-                        sendVideoKim(update);
-                    } catch (TelegramApiException | InterruptedException e) {
+                        execute(sendPhoto(update));
+                    } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
-                    counter=0;
+                    try {
+                        execute(new SendMessage().setText("Розслабтесь, та прийміть зручне для Вас положення. (Зачекайте)").setChatId(update.getMessage().getChatId()));
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        execute(sendVideo(update, Videofile));
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
                 }
-                if(message.equals("патріотична хвилинка")) {
+                if(exchange.contains(message)){
+                    try {
+                        execute(new SendMessage().setText(Currency.exchangeRating(message))
+                                .setChatId(update.getMessage().getChatId()));
+                    } catch (TelegramApiException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (message.equals("патріотична хвилинка")) {
+                    try {
+                        execute(new SendMessage().setText("Зачекайте будь ласка").setChatId(update.getMessage().getChatId()));
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
                     try {
                         sendVideoPatriotic(update);
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
-                    counter=0;
                 }
-                if(trash.contains(message) && !storage.get(storage.size()-counter-1).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")){
-                    if (storage.size() == 1 && !storage.get(0).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) {
-                        forCharBot(update,message);
-                        counter=0;
-                    }else if (storage.size() > 1 && !storage.get(storage.size() - 2).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) {
-                        forCharBot(update,message);
-                        counter=0;
+                if (!games.contains(message) && trash.contains(message) && !exchange.contains(message) && !isForWeatherCity(storage,update)) {
+                    forCharBot(update,message);
+                }
+                for (int i = 0; i < storage.size(); i++) {
+                    if (!storage.get(i).containsKey(update.getMessage().getChatId().toString())) {
+                        counter++;
+                    }else{
+                        storage.get(i).put(update.getMessage().getChatId().toString(),message);
+                    }
+
+                    if(i==storage.size()-1 && counter==storage.size()){
+                        HashMap<String,String> kek = new HashMap<>();
+                        kek.put(update.getMessage().getChatId().toString(),message);
+                        storage.add(kek);
                     }
                 }
-            }
-        }else if(update.hasCallbackQuery()) {
-            if (games.contains(update.getCallbackQuery().getData())) {
-                try {
-                    execute(new SendMessage().setText(Game.game(update.getCallbackQuery().getData()))
-                            .setChatId(update.getCallbackQuery().getMessage().getChatId()));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
+                if(storage.size()==0){
+                    HashMap<String,String> kek = new HashMap<>();
+                    kek.put(update.getMessage().getChatId().toString(),message);
+                    storage.add(kek);
                 }
-            }else if(exchange.contains(update.getCallbackQuery().getData())){
-                try {
-                    execute(new SendMessage().setText(Currency.exchangeRating(update.getCallbackQuery().getData()))
-                            .setChatId(update.getCallbackQuery().getMessage().getChatId()));
-                } catch (TelegramApiException | IOException e) {
-                    e.printStackTrace();
-                }
+                System.out.println(storage.toString());
             }
         }
+    }
+
+    public static boolean isForWeatherCity(List<HashMap<String,String>> storage, Update update){
+        for (int i = 0; i < storage.size(); i++) {
+            if(storage.get(i).get(update.getMessage().getChatId().toString()).equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void forCharBot(Update update,String message){
@@ -188,14 +243,6 @@ public class TelegramBot extends TelegramLongPollingBot{
         }
     }
 
-    public void sendVideoKim(Update message) throws TelegramApiException, InterruptedException {
-        File Videofile = new File("/Users/bonkbanan/Desktop/botTG/src/main/java/org/videos/HD Epic Sax Gandalf.mp4");
-        execute(sendPhoto(message));
-        Thread.sleep(1000);
-        execute(new SendMessage().setText("Розслабтесь, та прийміть зручне для Вас положення. (Зачекайте)").setChatId(message.getMessage().getChatId()));
-        execute(sendVideo(message,Videofile));
-    }
-
     public void sendVideoPatriotic(Update message) throws TelegramApiException {
         File Videofile = new File("/Users/bonkbanan/Desktop/botTG/src/main/java/org/videos/Patriotic.mp4");
         execute(sendVideo(message,Videofile));
@@ -220,11 +267,11 @@ public class TelegramBot extends TelegramLongPollingBot{
 
     @Override
     public String getBotUsername() {
-        return "Banan's Bot";
+        return "Banan2bot";
     }
 
     @Override
     public String getBotToken() {
-        return "1786184098:AAFlKIERGm8vfnNK25L_glvAmcut5HZTSDs";
+        return "5284758206:AAEucB6ECGlZMd1NtUwiwlowJDluC1RBSKA";
     }
 }

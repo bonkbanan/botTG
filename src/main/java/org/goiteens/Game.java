@@ -2,14 +2,23 @@ package org.goiteens;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
     public static String game(String message){
-        String playerChoice = message;
+        String playerChoice="";
+
+        switch (message) {
+            case "✌️":playerChoice = "scissors"; break;
+            case "🤚":playerChoice = "paper"; break;
+            case "✊":playerChoice = "stone"; break;
+        }
+
 
         int dealer = (int) (Math.random() * 3);
         String dealerChoice = "";
@@ -23,25 +32,25 @@ public class Game {
         }
         if((playerChoice.equals("paper") && dealerChoice.equals("stone"))||(playerChoice.equals("scissors") && dealerChoice.equals("paper"))
                 || (playerChoice.equals("stone") && dealerChoice.equals("scissors"))){
-            if (dealerChoice == "scissors") {
+            if (dealerChoice.equals("scissors")) {
                 return "Блін, Ви вийграли, я вибрав " + "✌️";
             }
-            if (dealerChoice == "paper") {
+            if (dealerChoice.equals("paper")) {
                 return "Блін, Ви вийграли, я вибрав " + "🖐";
             }
-            if (dealerChoice == "stone") {
+            if (dealerChoice.equals("stone")) {
                 return "Блін, Ви вийграли, я вибрав " + "\uD83D\uDC4A";
             }
         }
         if((playerChoice.equals("stone") && dealerChoice.equals("paper"))||(playerChoice.equals("paper") && dealerChoice.equals("scissors"))
                 || (playerChoice.equals("scissors") && dealerChoice.equals("stone"))) {
-            if (dealerChoice == "scissors") {
+            if (dealerChoice.equals("scissors")) {
                 return "Ура, я вийграв, я вибрав " + "✌️";
             }
-            if (dealerChoice == "paper") {
+            if (dealerChoice.equals("paper")) {
                 return "Ура, я вийграв, я вибрав " + "🖐";
             }
-            if (dealerChoice == "stone") {
+            if (dealerChoice.equals("stone")) {
                 return "Ура, я вийграв, я вибрав " + "\uD83D\uDC4A";
             }
 
@@ -50,24 +59,23 @@ public class Game {
     }
 
     public static SendMessage sendInlineKeyBoardMessage(String chatId) {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
-        inlineKeyboardButton1.setText("✌️");
-        inlineKeyboardButton1.setCallbackData("scissors");
-        inlineKeyboardButton2.setText("\uD83E\uDD1A");
-        inlineKeyboardButton2.setCallbackData("paper");
-        inlineKeyboardButton3.setText("✊");
-        inlineKeyboardButton3.setCallbackData("stone");
-        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        keyboardButtonsRow1.add(inlineKeyboardButton1);
-        keyboardButtonsRow1.add(inlineKeyboardButton2);
-        keyboardButtonsRow1.add(inlineKeyboardButton3);
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardButtonsRow1);
+        SendMessage text = new SendMessage() // Create a message object object
+                .setChatId(chatId)
+                .setText("Твій хід");
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setResizeKeyboard(true);
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        row.add("✌️");
+        row.add("✊");
+        row.add("\uD83E\uDD1A");
+        row.add("Назад");
 
-        inlineKeyboardMarkup.setKeyboard(rowList);
-        return new SendMessage().setChatId(chatId).setText("Твій хід").setReplyMarkup(inlineKeyboardMarkup);
+        keyboard.add(row);
+
+        keyboardMarkup.setKeyboard(keyboard);
+        text.setReplyMarkup(keyboardMarkup);
+        return text;
+
     }
 }

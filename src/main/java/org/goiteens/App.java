@@ -19,11 +19,11 @@ public class App {
     }
 
     public String getBotUsername() {
-        return "denysjava02_bot";
+        return "Banan2bot";
     }
 
     public String getBotToken() {
-        return "1786184098:AAFlKIERGm8vfnNK25L_glvAmcut5HZTSDs";
+        return "5284758206:AAEucB6ECGlZMd1NtUwiwlowJDluC1RBSKA";
     }
 
 }
