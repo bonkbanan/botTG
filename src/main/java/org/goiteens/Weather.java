@@ -48,64 +48,68 @@ public class Weather {
             int days = (int) (difference / (24 * 60 * 60 * 1000));
 
             if (days >= 0) {
-                String url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/";
-                url += city;
-                url += "?unitGroup=metric&key=F9JEPVVBPAU6MQBEFEA7DXNXD&contentType=json";
-                String doc = Jsoup.connect(url).ignoreContentType(true).execute().body();
-                doc = doc.toLowerCase();
-                doc = doc.replaceAll("[,:]", " ");
-                doc = doc.replaceAll("[^a-z- 0-9.]", "");
-                List<String> list = new ArrayList<>(Arrays.asList(doc.split(" ")));
-                list = list.stream().filter(el -> el.length() > 1).collect(Collectors.toList());
-                int index;
-                OptionalInt indexHour;
-                List<String> finalList = list;
-                indexHour = IntStream.range(0, list.size()).filter(el -> isGoodTime(finalList, el)).findFirst();
+                if(days <14) {
+                    String url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/";
+                    url += city;
+                    url += "?unitGroup=metric&key=F9JEPVVBPAU6MQBEFEA7DXNXD&contentType=json";
+                    String doc = Jsoup.connect(url).ignoreContentType(true).execute().body();
+                    doc = doc.toLowerCase();
+                    doc = doc.replaceAll("[,:]", " ");
+                    doc = doc.replaceAll("[^a-z- 0-9.]", "");
+                    List<String> list = new ArrayList<>(Arrays.asList(doc.split(" ")));
+                    list = list.stream().filter(el -> el.length() > 1).collect(Collectors.toList());
+                    int index;
+                    OptionalInt indexHour;
+                    List<String> finalList = list;
+                    indexHour = IntStream.range(0, list.size()).filter(el -> isGoodTime(finalList, el)).findFirst();
 
-                index = list.indexOf(kek);
-                String status = "";
-                int i = index + 66;
-                while (!list.get(i).equals("description")) {
-                    if (list.get(i).equals("conditions")) {
-                        i++;
-                        continue;
-                    } else {
-                        status += list.get(i);
-                        if (list.get(i).equals("snow") || list.get(i).equals("rain") || list.get(i).equals("cloudy") || list.get(i).equals("overcast")) {
-                            status += ", ";
+                    index = list.indexOf(kek);
+                    String status = "";
+                    int i = index + 66;
+                    while (!list.get(i).equals("description")) {
+                        if (list.get(i).equals("conditions")) {
+                            i++;
+                            continue;
                         } else {
-                            status += " ";
+                            status += list.get(i);
+                            if (list.get(i).equals("snow") || list.get(i).equals("rain") || list.get(i).equals("cloudy") || list.get(i).equals("overcast")) {
+                                status += ", ";
+                            } else {
+                                status += " ";
+                            }
+                            i++;
                         }
-                        i++;
-                    }
 
-                }
-                if(days == 0) {
-                    return "Станом на зараз, спостерігаєтсья така погода: \n" +
-                            "Стан погоди: " + status +
-                            "\nМаксимальна температура: " + trash(list, index, "tempmax") +
-                            ",\nМінімальна температура: " + trash(list, index, "tempmin") +
-                            ",\nТемпература в данний момент: " + trash(list, indexHour.getAsInt(), "temp") +
-                            ",\nВідчувається як: " + trash(list, indexHour.getAsInt(), "feelslike") +
-                            ",\nВологість повітря: " + trash(list, indexHour.getAsInt(), "humidity") +
-                            "%,\nАтмосферний тиск: " + trash(list, indexHour.getAsInt(), "pressure") +
-                            " мм ртутного стовпчика,\nШвидкість вітру: " + trash(list, indexHour.getAsInt(), "windspeed") +
-                            " км/год,\nНебо в хмарах: " + trash(list, indexHour.getAsInt(), "cloudcover") +
-                            "%,\nСхід Сонця: " + trashTime(list, indexHour.getAsInt(), "sunrise") +
-                            ",\nЗахід Сонця: " + trashTime(list, indexHour.getAsInt(), "sunset");
+                    }
+                    if (days == 0) {
+                        return "Станом на зараз, спостерігаєтсья така погода: \n" +
+                                "Стан погоди: " + status +
+                                "\nМаксимальна температура: " + trash(list, index, "tempmax") +
+                                ",\nМінімальна температура: " + trash(list, index, "tempmin") +
+                                ",\nТемпература в данний момент: " + trash(list, indexHour.getAsInt(), "temp") +
+                                ",\nВідчувається як: " + trash(list, indexHour.getAsInt(), "feelslike") +
+                                ",\nВологість повітря: " + trash(list, indexHour.getAsInt(), "humidity") +
+                                "%,\nАтмосферний тиск: " + trash(list, indexHour.getAsInt(), "pressure") +
+                                " мм ртутного стовпчика,\nШвидкість вітру: " + trash(list, indexHour.getAsInt(), "windspeed") +
+                                " км/год,\nНебо в хмарах: " + trash(list, indexHour.getAsInt(), "cloudcover") +
+                                "%,\nСхід Сонця: " + trashTime(list, indexHour.getAsInt(), "sunrise") +
+                                ",\nЗахід Сонця: " + trashTime(list, indexHour.getAsInt(), "sunset");
+                    } else {
+                        return "Станом на " + format.format(dateOne) + ", спостерігатиметься така погода: \n" +
+                                "Стан погоди: " + status +
+                                "\nМаксимальна температура: " + trash(list, index, "tempmax") +
+                                ",\nМінімальна температура: " + trash(list, index, "tempmin") +
+                                ",\nТемпература в данний момент: " + trash(list, indexHour.getAsInt(), "temp") +
+                                ",\nВідчувається як: " + trash(list, indexHour.getAsInt(), "feelslike") +
+                                ",\nВологість повітря: " + trash(list, indexHour.getAsInt(), "humidity") +
+                                "%,\nАтмосферний тиск: " + trash(list, indexHour.getAsInt(), "pressure") +
+                                " мм ртутного стовпчика,\nШвидкість вітру: " + trash(list, indexHour.getAsInt(), "windspeed") +
+                                " км/год,\nНебо в хмарах: " + trash(list, indexHour.getAsInt(), "cloudcover") +
+                                "%,\nСхід Сонця: " + trashTime(list, indexHour.getAsInt(), "sunrise") +
+                                ",\nЗахід Сонця: " + trashTime(list, indexHour.getAsInt(), "sunset");
+                    }
                 }else{
-                    return "Станом на " + format.format(dateOne) + ", спостерігатиметься така погода: \n" +
-                            "Стан погоди: " + status +
-                            "\nМаксимальна температура: " + trash(list, index, "tempmax") +
-                            ",\nМінімальна температура: " + trash(list, index, "tempmin") +
-                            ",\nТемпература в данний момент: " + trash(list, indexHour.getAsInt(), "temp") +
-                            ",\nВідчувається як: " + trash(list, indexHour.getAsInt(), "feelslike") +
-                            ",\nВологість повітря: " + trash(list, indexHour.getAsInt(), "humidity") +
-                            "%,\nАтмосферний тиск: " + trash(list, indexHour.getAsInt(), "pressure") +
-                            " мм ртутного стовпчика,\nШвидкість вітру: " + trash(list, indexHour.getAsInt(), "windspeed") +
-                            " км/год,\nНебо в хмарах: " + trash(list, indexHour.getAsInt(), "cloudcover") +
-                            "%,\nСхід Сонця: " + trashTime(list, indexHour.getAsInt(), "sunrise") +
-                            ",\nЗахід Сонця: " + trashTime(list, indexHour.getAsInt(), "sunset");
+                    return "Я можу показати погоду на 2 тиждня наперед, введіть будь-ласка раннішу дату";
                 }
             } else {
                 return "Вибачте, але я не можу показати погоду, яка була раніше";
