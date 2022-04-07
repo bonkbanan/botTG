@@ -70,6 +70,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
+
                 if (message.equals("зіграти камінь-ножниці-папір")) {
                     try {
                         execute(Game.sendInlineKeyBoardMessage(update.getMessage().getChatId().toString()));
@@ -77,6 +78,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
+
                 if (message.equals("назад")) {
                     SendMessage text = new SendMessage() // Create a message object object
                             .setChatId(update.getMessage().getChatId())
@@ -105,6 +107,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
+
                 if (games.contains(message)) {
                     try {
                         execute(new SendMessage().setText(Game.game(message)).setChatId(update.getMessage().getChatId()));
@@ -112,6 +115,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
+
                 if (message.equals("актуальний курс валют")) {
                     try {
                         execute(Currency.sendInlineKeyBoardForeignMoney(update.getMessage().getChatId().toString()));
@@ -119,6 +123,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
+
                 if (!exchange.contains(message) && !games.contains(message) && !trash.contains(message) && !trashForWeather.contains(message) && !isForWeatherCity(storage,update)) {
                     try {
                         execute(new SendMessage().setText("Вибачте, але я не найшов у вашому повідомленні команду, яку я можу виконати(").setChatId(update.getMessage().getChatId().toString()));
@@ -126,6 +131,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
+
                 if(isForWeatherCity(storage,update)) {
                             try {
                                 execute(new SendMessage().setText(Weather.weather(message)).setChatId(update.getMessage().getChatId().toString()));
@@ -133,9 +139,11 @@ public class TelegramBot extends TelegramLongPollingBot{
                                 e.printStackTrace();
                             }
                 }
+
                 if (message.equals("нехай проблеми та незгоди не роблять вам в житті погоди(погода)")) {
                     forWeatherElse(update);
                 }
+
                 if (message.equals("хвилинка релаксу з кімом")) {
                     File Videofile = new File("/Users/bonkbanan/Desktop/botTG/src/main/java/org/videos/HD Epic Sax Gandalf.mp4");
                     SendVideo sendVideo = new SendVideo();
@@ -159,6 +167,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
+
                 if(exchange.contains(message)){
                     try {
                         execute(new SendMessage().setText(Currency.exchangeRating(message))
@@ -167,6 +176,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
+
                 if (message.equals("патріотична хвилинка")) {
                     try {
                         execute(new SendMessage().setText("Зачекайте будь ласка").setChatId(update.getMessage().getChatId()));
@@ -179,9 +189,11 @@ public class TelegramBot extends TelegramLongPollingBot{
                         e.printStackTrace();
                     }
                 }
+
                 if (!games.contains(message) && trash.contains(message) && !exchange.contains(message) && !isForWeatherCity(storage,update)) {
                     forCharBot(update,message);
                 }
+
                 for (int i = 0; i < storage.size(); i++) {
                     if (!storage.get(i).containsKey(update.getMessage().getChatId().toString())) {
                         counter++;
@@ -195,12 +207,12 @@ public class TelegramBot extends TelegramLongPollingBot{
                         storage.add(kek);
                     }
                 }
+
                 if(storage.size()==0){
                     HashMap<String,String> kek = new HashMap<>();
                     kek.put(update.getMessage().getChatId().toString(),message);
                     storage.add(kek);
                 }
-                System.out.println(storage.toString());
             }
         }
     }
