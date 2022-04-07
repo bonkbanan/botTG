@@ -14,7 +14,7 @@ public class ChatBot {
     }
 
     public static String process(String message) throws IOException {
-        if ("слава україні".equals(message)) {
+        if (message.contains("слава україні")) {
             return "Героям Слава";
         }
 
@@ -27,18 +27,22 @@ public class ChatBot {
                     "Якщо у вас був важкий день, напишіть 'хвилинка релаксу'";
 
         }
-        if ("слава нації".equals(message)){
+        if ("слава нації".contains(message)){
             return "Смерть Ворогам";
         }
-        if ("путін".equals(message)){
+
+        if (message.contains("путін")){
             return "Х****";
         }
-        if("україна".equals(message) || "🇺🇦".equals(message) || "💙💛".equals(message)){
+        if(message.contains("україні") || message.contains("🇺🇦") || message.contains("💙💛")){
             return "Понад Усе";
         }
         if (isHelloMessage(message)) {
             String botName = "Banan's Bot";
             return "Вітаю, я - " + botName;
+        }
+        if (message.contains("слава ісусу хресту")){
+            return "Слава на віки!";
         }
 
         return "Вибачте, але я не найшов у вашому повідомленні команду, яку я можу виконати(";
@@ -59,6 +63,7 @@ public class ChatBot {
         list.add("hi");
         list.add("hello");
         list.add("bounjour");
+        list.add("слава ісусу хресту");
 
         return list.contains(message);
     }
