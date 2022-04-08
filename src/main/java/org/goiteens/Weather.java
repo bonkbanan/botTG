@@ -1,9 +1,6 @@
 package org.goiteens;
 
 import org.jsoup.Jsoup;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,8 +19,7 @@ public class Weather {
         String city = array.get(0);
         String date;
         String kek = "";
-//        date = format.format(date1);
-//        kek = date;
+
         if(array.size() == 1){
             date = formatForDateNow.format(date1);
         }else {
@@ -79,7 +75,6 @@ public class Weather {
                             }
                             i++;
                         }
-
                     }
                     if (days == 0) {
                         return "Станом на зараз, спостерігаєтсья така погода: \n" +
@@ -137,6 +132,4 @@ public class Weather {
     public static boolean isGoodWord(List<String> list,int index,String searchedWord){
         return list.get(index).equals(searchedWord);
     }
-
-
 }

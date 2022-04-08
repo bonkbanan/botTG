@@ -4,15 +4,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class ChatBot {
-    public static void main(String[] args) throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        String message = scanner.nextLine();
-
-
-        String botAnswer = process(message);
-        System.out.println(botAnswer);
-    }
-
     public static String process(String message) throws IOException {
         if (message.contains("слава україні")) {
             return "Героям Слава";
@@ -48,10 +39,6 @@ public class ChatBot {
 
         return "Вибачте, але я не найшов у вашому повідомленні команду, яку я можу виконати(";
     }
-
-
-
-
 
     private static boolean isHelloMessage(String message) {
         List<String> list = new ArrayList<>();
