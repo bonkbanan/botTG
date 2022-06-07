@@ -145,7 +145,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                 }
 
                 if (message.equals("хвилинка релаксу з кімом")) {
-                    File Videofile = new File("/Users/bonkbanan/Desktop/botTG 2/src/main/java/org/videos/HD Epic Sax Gandalf.mp4");
+                    File Videofile = new File("src/main/java/org/videos/HD Epic Sax Gandalf.mp4");
                     SendVideo sendVideo = new SendVideo();
                     sendVideo.setChatId(update.getMessage().getChatId().toString());
                     sendVideo.setVideo(Videofile);
@@ -256,7 +256,7 @@ public class TelegramBot extends TelegramLongPollingBot{
     }
 
     public void sendVideoPatriotic(Update message) throws TelegramApiException {
-        File Videofile = new File("/Users/bonkbanan/Desktop/botTG 2/src/main/java/org/videos/Patriotic.mp4");
+        File Videofile = new File("src/main/java/org/videos/Patriotic.mp4");
         execute(sendVideo(message,Videofile));
     }
 
@@ -270,7 +270,7 @@ public class TelegramBot extends TelegramLongPollingBot{
     }
 
     public SendPhoto sendPhoto(Update message){
-        File photoFile = new File("/Users/bonkbanan/Desktop/botTG 2/src/main/java/org/videos/KimWearsSocks.jpeg");
+        File photoFile = new File("src/main/java/org/videos/KimWearsSocks.jpeg");
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setChatId(message.getMessage().getChatId().toString());
         sendPhoto.setPhoto(photoFile);
